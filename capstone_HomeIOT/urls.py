@@ -17,10 +17,12 @@ from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
 from rest_framework import routers
-from homeiotapi.views import register_user, login_user, UsersViewSet, get_current_user, is_current_user_admin
+from homeiotapi.views import register_user, login_user, UsersViewSet, get_current_user, is_current_user_admin, DevicesViewSet
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'users', UsersViewSet, 'users')
+router.register(r'devices', DevicesViewSet, 'devices')
+
 
 urlpatterns = [
     path('', include(router.urls)),
