@@ -5,9 +5,11 @@ from homeiotapi.models import Device
 class DeviceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Device
-        rareuser = serializers.PrimaryKeyRelatedField(
+        appuser = serializers.PrimaryKeyRelatedField(
             many=False, read_only=True)
-        category = serializers.PrimaryKeyRelatedField(
+        location = serializers.PrimaryKeyRelatedField(
+            many=False, read_only=True)
+        sensor_type = serializers.PrimaryKeyRelatedField(
             many=False, read_only=True)
         fields = ('id', 'appuser', 'name', 'location',
                   'created_datetime', 'device_img_url', 'hardware_number', 'sensor_type', 'tag',
