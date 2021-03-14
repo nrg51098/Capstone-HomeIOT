@@ -5,8 +5,8 @@ from django.db.models.deletion import CASCADE, SET_NULL
 class UserPreference(models.Model):
     
     UNIT_SYSTEM_CHOICES = [
-        ('SI', 'Imperial'),
-        ('IN', 'Metric'),
+        ('IN', 'Imperial'),
+        ('SI', 'Metric'),
     ]
     unit = models.CharField(
         max_length=2,

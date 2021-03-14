@@ -4,7 +4,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from django.views.decorators.csrf import csrf_exempt
-from homeiotapi.models import AppUser
+from homeiotapi.models import AppUser, UserPreference, appuser
 
 
 @csrf_exempt
@@ -40,6 +40,16 @@ def register_user(request):
 
     # Commit the user to the database by saving it
     appUser.save()
+
+    # Create default userpreferences for the new user automatially
+    userpreference = UserPreference.objects.create(
+        unit= "IN",
+        fail_notification = False,
+        threshold_notification = False,
+        appuser=appUser
+    )
+    # Commit the user preference to the database by saving it
+    userpreference.save()
 
     # Use the REST Framework's token generator on the new user account
     token = Token.objects.create(user=new_user)
