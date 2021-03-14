@@ -17,6 +17,7 @@ class Subscription(models.Model):
         related_name="subscriptions",
         related_query_name="subscription"
     )
+    device_notification = models.BooleanField(default=True)
     
   
     def __str__(self):

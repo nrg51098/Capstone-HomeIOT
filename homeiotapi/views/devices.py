@@ -75,7 +75,7 @@ class DevicesViewSet(ViewSet):
             device.delete()
             return Response({}, status=status.HTTP_204_NO_CONTENT)
 
-        except Device.DoesNotExist as ex:
+        except device.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
         except Exception as ex:

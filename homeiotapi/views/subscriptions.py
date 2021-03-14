@@ -41,22 +41,24 @@ class SubscriptionsViewSet(ViewSet):
     
     def create(self, request):
         try:
-          user = AppUser.objects.get(pk=request.user.id)
-          device_id = request.data["device_id"]    
-          subscription = Subscription()
-          subscription.device_id = device_id
-          subscription.appuser = user
+            user = AppUser.objects.get(pk=request.user.id)
+            device_id = request.data["device_id"]
+            device_notification = request.data["device_notification"]    
+            subscription = Subscription()
+            subscription.device_id = device_id
+            subscription.device_notification = device_notification
+            subscription.appuser = user
 
-          try:
-            exists = Subscription.objects.get(device_id=device_id, appuser_id=user.id)
-          except Subscription.DoesNotExist as ex:
             try:
-              subscription.save()
-              serializer = SubscriptionsSerializer(subscription, context={'request': request})
-              return Response(serializer.data, status=status.HTTP_201_CREATED)
+                Subscription.objects.get(device_id=device_id, appuser_id=user.id)
+            except Subscription.DoesNotExist as ex:
+                try:
+                    subscription.save()
+                    serializer = SubscriptionsSerializer(subscription, context={'request': request})
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-            except ValidationError as ex:
-              return Response({'reason': ex.message}, status=status.HTTP_400_BAD_REQUEST)
+                except ValidationError as ex:
+                    return Response({'reason': ex.message}, status=status.HTTP_400_BAD_REQUEST)
         
         except Exception as ex:
           return HttpResponseServerError(ex)
@@ -69,10 +71,14 @@ class SubscriptionsViewSet(ViewSet):
     def destroy(self, request, pk=None):
 
         try:
-          subscription = Subscription.objects.get(pk=pk)
-          subscription.delete()
+            if request.user.is_staff:
+                subscription = Subscription.objects.get(pk=pk)
+            else:
+                subscription = Subscription.objects.get(pk=pk, appuser_id=request.user.id)
+            
+            subscription.delete()
 
-          return Response({}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"msg":"subscription deleted"}, status=status.HTTP_204_NO_CONTENT)
 
         except subscription.DoesNotExist as ex:
           return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
@@ -81,14 +87,20 @@ class SubscriptionsViewSet(ViewSet):
           return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-    # def update(self, request, pk=None):
-    #     # set_end_null = request.data["ended_on"]
-    #     subscription = Subscription.objects.get(pk=pk)
-    #     if subscription.sub_unsub_date is None:
-    #       subscription.sub_unsub_date = datetime.now()
-    #     else:
-    #       subscription.sub_unsub_date = None
+    def update(self, request, pk=None):
+        try:
+            if request.user.is_staff:
+                subscription = Subscription.objects.get(pk=pk)
+            else:
+                subscription = Subscription.objects.get(pk=pk, appuser_id=request.user.id)
+            
+            subscription.device_notification = request.data["device_notification"]
+            subscription.save()
 
-    #     subscription.save()
+            return Response({"msg": "device_notification updated succesfully"}, status=status.HTTP_204_NO_CONTENT)
 
-    #     return Response({}, status=status.HTTP_204_NO_CONTENT)
+        except subscription.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
