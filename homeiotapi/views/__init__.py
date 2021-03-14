@@ -4,3 +4,4 @@ from .devices import DevicesViewSet
 from .tags import TagViewSet
 from .subscriptions import SubscriptionsViewSet
 from .userpreferences import UserPreferencesViewSet
+from .locations import LocationsViewSet
