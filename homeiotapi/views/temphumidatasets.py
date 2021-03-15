@@ -5,27 +5,28 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from homeiotapi.models import TempDataset, AppUser, Device
-from homeiotapi.serializers import TempDatasetsSerializer
+from homeiotapi.models import TempHumiDataset, AppUser, Device
+from homeiotapi.serializers import TempHumiDatasetsSerializer
 
-class TempDatasetsViewSet(ViewSet):
+class TempHumiDatasetsViewSet(ViewSet):
 
     def create(self, request):
         creator = AppUser.objects.get(user=request.auth.user)
 
-        tempdataset = TempDataset()
-        tempdataset.device_id = request.data["device_id"]
-        tempdataset.temp = request.data["temp"]
+        temphumidataset = TempHumiDataset()
+        temphumidataset.device_id = request.data["device_id"]
+        temphumidataset.temp = request.data["temp"]
+        temphumidataset.humi = request.data["humi"]
 
         if request.data["timestamp"] is not None:
-            tempdataset.timestamp = request.data["timestamp"] 
+            temphumidataset.timestamp = request.data["timestamp"] 
         
         currentdevice = Device.objects.get(pk=request.data["device_id"])
 
         try:
             if currentdevice.appuser.id == creator.id:
-                tempdataset.save()
-                serializer = TempDatasetsSerializer(tempdataset, context={'request': request})
+                temphumidataset.save()
+                serializer = TempHumiDatasetsSerializer(temphumidataset, context={'request': request})
                 return Response(serializer.data)
 
             else:
@@ -40,42 +41,42 @@ class TempDatasetsViewSet(ViewSet):
 
     # def retrieve(self, request, pk=None):
     #     try:
-    #         tempdataset = TempDataset.objects.get(pk=pk)
-    #         serializer = TempDatasetsSerializer(tempdataset, context={'request': request})
+    #         temphumidataset = TempHumiDataset.objects.get(pk=pk)
+    #         serializer = TempDatasetsSerializer(temphumidataset, context={'request': request})
     #         return Response(serializer.data)
     #     except Exception as ex:
     #         return HttpResponseServerError(ex)
 
     # def update(self, request, pk=None):
 
-    #     tempdataset = TempDataset.objects.get(pk=pk)
-    #     tempdataset.temp = request.data["temp"]
+    #     temphumidataset = TempHumiDataset.objects.get(pk=pk)
+    #     temphumidataset.temp = request.data["temp"]
 
-    #     tempdataset.save()
+    #     temphumidataset.save()
     #     return Response({}, status=status.HTTP_204_NO_CONTENT)
 
     # def destroy(self, request, pk=None):
 
     #     try:
-    #         tempdataset = TempDataset.objects.get(pk=pk)
-    #         tempdataset.delete()
+    #         temphumidataset = TempHumiDataset.objects.get(pk=pk)
+    #         temphumidataset.delete()
 
     #         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
-    #     except TempDataset.DoesNotExist as ex:
+    #     except TempHumiDataset.DoesNotExist as ex:
     #         return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
     #     except Exception as ex:
     #         return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def list(self, request):
-        # tempdatasets = TempDataset.objects.all()
+        # tempdatasets = TempHumiDataset.objects.all()
 
         tempdatasets = {}
         creator = AppUser.objects.get(user=request.auth.user)
         device_id = self.request.query_params.get('device_id', None)
         if device_id is not None:
-            tempdatasets = TempDataset.objects.all()
+            tempdatasets = TempHumiDataset.objects.all()
             tempdatasets = tempdatasets.filter(device__id=device_id)
             device = Device.objects.get(pk=device_id)
             if device.appuser.id != creator.id:
@@ -88,11 +89,10 @@ class TempDatasetsViewSet(ViewSet):
         # if the device is public and the device is active then if any user provides the device_id for this device it shows up
         # if the device is private and the device is active then only user can see the device datasets if he provides the device_id in the url
         # if the device is not active then no body sees the data
-        # and only user who has created the device can add the datasets to that device
 
 
         # These filters all you to do http://localhost:8000/devices?device_id=1
 
-        serializer = TempDatasetsSerializer(
+        serializer = TempHumiDatasetsSerializer(
             tempdatasets, many=True, context={'request': request})
         return Response(serializer.data)

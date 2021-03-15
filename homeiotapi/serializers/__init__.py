@@ -6,3 +6,4 @@ from .userpreferences import UserPreferencesSerializer
 from .locations import LocationSerializer
 from .sensortypes import SensorTypeSerializer
 from .tempdatasets import TempDatasetsSerializer
+from .temphumidatasets import TempHumiDatasetsSerializer

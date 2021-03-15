@@ -17,7 +17,7 @@ from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
 from rest_framework import routers
-from homeiotapi.views import register_user, login_user, UsersViewSet, get_current_user, is_current_user_admin, DevicesViewSet, TagViewSet, SubscriptionsViewSet, UserPreferencesViewSet, LocationsViewSet, SensorTypesViewSet, TempDatasetsViewSet
+from homeiotapi.views import register_user, login_user, UsersViewSet, get_current_user, is_current_user_admin, DevicesViewSet, TagViewSet, SubscriptionsViewSet, UserPreferencesViewSet, LocationsViewSet, SensorTypesViewSet, TempDatasetsViewSet, TempHumiDatasetsViewSet
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'users', UsersViewSet, 'users')
@@ -28,6 +28,7 @@ router.register(r'userpreferences', UserPreferencesViewSet, 'userpreferences')
 router.register(r'locations', LocationsViewSet, 'locations')
 router.register(r'sensortypes', SensorTypesViewSet, 'sensortypes')
 router.register(r'tempdatasets', TempDatasetsViewSet, 'tempdatasets')
+router.register(r'temphumidatasets', TempHumiDatasetsViewSet, 'temphumidatasets')
 
 
 
