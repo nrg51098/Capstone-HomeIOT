@@ -9,3 +9,4 @@ from .sensortypes import SensorTypesViewSet
 from .tempdatasets import TempDatasetsViewSet
 from .temphumidatasets import TempHumiDatasetsViewSet
 from .buttondatasets import ButtonDatasetsViewSet
+from .tempthresholds import TempThresholdsViewSet
