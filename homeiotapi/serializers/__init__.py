@@ -8,3 +8,4 @@ from .sensortypes import SensorTypeSerializer
 from .tempdatasets import TempDatasetsSerializer
 from .temphumidatasets import TempHumiDatasetsSerializer
 from .buttondatasets import ButtonDatasetsSerializer
+from .tempthresholds import TempThresholdsSerializer
