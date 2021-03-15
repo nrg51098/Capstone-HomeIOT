@@ -1,9 +1,10 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
+from django.utils import timezone
 
 
 class TempDataset(models.Model):
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(default=timezone.now)
     device = models.ForeignKey(
         "Device",
         on_delete=CASCADE,
