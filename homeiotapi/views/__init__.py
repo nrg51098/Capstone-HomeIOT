@@ -7,3 +7,4 @@ from .userpreferences import UserPreferencesViewSet
 from .locations import LocationsViewSet
 from .sensortypes import SensorTypesViewSet
 from .tempdatasets import TempDatasetsViewSet
+from .temphumidatasets import TempHumiDatasetsViewSet
