@@ -5,19 +5,19 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from homeiotapi.models import TempThreshold, AppUser
-from homeiotapi.serializers import TempThresholdsSerializer
+from homeiotapi.models import TempHumiThreshold, AppUser
+from homeiotapi.serializers import TempHumiThresholdsSerializer
 
-class TempThresholdsViewSet(ViewSet):
+class TempHumiThresholdsViewSet(ViewSet):
 
     # def create(self, request):
 
-    #     tempthreshold = TempThreshold()
-    #     tempthreshold.label = request.data["label"]
+    #     temphumithreshold = TempHumiThreshold()
+    #     temphumithreshold.label = request.data["label"]
 
     #     try:
-    #         tempthreshold.save()
-    #         serializer = TempThresholdsSerializer(tempthreshold, context={'request': request})
+    #         temphumithreshold.save()
+    #         serializer = TempHumiThresholdsSerializer(temphumithreshold, context={'request': request})
     #         return Response(serializer.data)
 
     #     except ValidationError as ex:
@@ -27,10 +27,10 @@ class TempThresholdsViewSet(ViewSet):
 
     def retrieve(self, request, pk=None):
         try:
-            tempthreshold = TempThreshold.objects.get(pk=pk)
+            temphumithreshold = TempHumiThreshold.objects.get(pk=pk)
             creator = AppUser.objects.get(user=request.auth.user)
-            if tempthreshold.subscription.appuser.id == creator.id:
-                serializer = TempThresholdsSerializer(tempthreshold, context={'request': request})
+            if temphumithreshold.subscription.appuser.id == creator.id:
+                serializer = TempHumiThresholdsSerializer(temphumithreshold, context={'request': request})
                 return Response(serializer.data)
             else:
                 return Response({'message': "No permissions"}, status=status.HTTP_401_UNAUTHORIZED) 
@@ -40,36 +40,38 @@ class TempThresholdsViewSet(ViewSet):
     def update(self, request, pk=None):
 
         try:
-            tempthreshold = TempThreshold.objects.get(pk=pk)
+            temphumithreshold = TempHumiThreshold.objects.get(pk=pk)
             creator = AppUser.objects.get(user=request.auth.user)
-            if tempthreshold.subscription.appuser.id == creator.id:        
-                tempthreshold.min_temp = request.data["min_temp"]
-                tempthreshold.max_temp = request.data["max_temp"]
+            if temphumithreshold.subscription.appuser.id == creator.id:        
+                temphumithreshold.min_temp = request.data["min_temp"]
+                temphumithreshold.max_temp = request.data["max_temp"]
+                temphumithreshold.min_humi = request.data["min_humi"]
+                temphumithreshold.max_humi = request.data["max_humi"]
 
-                tempthreshold.save()
+                temphumithreshold.save()
                 return Response({"msg":"fields updated successfully"}, status=status.HTTP_204_NO_CONTENT)
             else:
-                return Response({'message': "No permissions"}, status=status.HTTP_400_BAD_REQUEST)        
+                return Response({'message': "No permissions"}, status=status.HTTP_401_UNAUTHORIZED)        
         
         except Exception as ex:
             return HttpResponseServerError(ex)
     # def destroy(self, request, pk=None):
 
     #     try:
-    #         tempthreshold = TempThreshold.objects.get(pk=pk)
-    #         tempthreshold.delete()
+    #         temphumithreshold = TempHumiThreshold.objects.get(pk=pk)
+    #         temphumithreshold.delete()
 
     #         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
-    #     except TempThreshold.DoesNotExist as ex:
+    #     except TempHumiThreshold.DoesNotExist as ex:
     #         return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
     #     except Exception as ex:
     #         return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     # def list(self, request):
-    #     tags = TempThreshold.objects.all()
+    #     tags = TempHumiThreshold.objects.all()
 
-    #     serializer = TempThresholdsSerializer(
+    #     serializer = TempHumiThresholdsSerializer(
     #         tags, many=True, context={'request': request})
     #     return Response(serializer.data)
