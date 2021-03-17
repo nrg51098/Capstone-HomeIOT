@@ -7,7 +7,7 @@ from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
-from homeiotapi.models import Subscription
+from homeiotapi.models import Subscription, TempThreshold, TempHumiThreshold, ButtonThreshold, Device, buttonthreshold
 from homeiotapi.serializers import SubscriptionsSerializer
 from datetime import datetime
 from django.db.models import Q
@@ -53,7 +53,32 @@ class SubscriptionsViewSet(ViewSet):
                 Subscription.objects.get(device_id=device_id, appuser_id=user.id)
             except Subscription.DoesNotExist as ex:
                 try:
-                    subscription.save()
+                    device = Device.objects.get(pk=device_id)
+                    if device is not None:
+                        subscription.save()
+                        print(device.sensor_type_id)
+                        if device.sensor_type_id == 1:
+                            tempthreshold = TempThreshold()
+                            tempthreshold.subscription_id = subscription.id
+                            tempthreshold.min_temp = 11.00
+                            tempthreshold.max_temp = 89.00
+                            tempthreshold.save()
+                        elif device.sensor_type_id == 2:
+                            temphumithreshold = TempHumiThreshold()
+                            temphumithreshold.subscription_id = subscription.id
+                            temphumithreshold.min_temp = 11.00
+                            temphumithreshold.max_temp = 89.00
+                            temphumithreshold.min_humi = 20.00
+                            temphumithreshold.max_humi = 80.00
+                            temphumithreshold.save()
+                        elif device.sensor_type_id == 3:
+                            buttonthreshold = ButtonThreshold()
+                            buttonthreshold.subscription_id = subscription.id
+                            buttonthreshold.notify_if = False
+                            buttonthreshold.save()
+                    else:
+                        return Response({'reason': "something went wrong"}, status=status.HTTP_400_BAD_REQUEST)    
+
                     serializer = SubscriptionsSerializer(subscription, context={'request': request})
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
