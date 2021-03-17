@@ -89,6 +89,7 @@ class TempHumiDatasetsViewSet(ViewSet):
         # if the device is public and the device is active then if any user provides the device_id for this device it shows up
         # if the device is private and the device is active then only user can see the device datasets if he provides the device_id in the url
         # if the device is not active then no body sees the data
+        # and only user who has created the device can add the datasets to that device
 
 
         # These filters all you to do http://localhost:8000/devices?device_id=1
